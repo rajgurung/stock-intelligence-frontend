@@ -33,6 +33,8 @@
 
 ![Dashboard Overview](docs/screenshots/dashboard-overview.png)
 
+![Dashboard Overview](docs/screenshots/charts.png)
+
 ### Stock Comparison Tool
 *Compare multiple stocks side-by-side with detailed analytics*
 
