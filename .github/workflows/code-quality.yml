@@ -1,0 +1,60 @@
+name: 🔍 Code Quality
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: 📦 Install Dependencies
+        run: npm ci
+      
+      - name: 🔍 ESLint Check
+        run: npm run lint
+        continue-on-error: false
+      
+      - name: 🔷 TypeScript Check
+        run: npm run type-check
+        continue-on-error: false
+      
+      - name: 🏗️ Build Check
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080
+          NEXT_PUBLIC_WS_URL: ws://localhost:8080/ws
+          NEXT_PUBLIC_ML_API_URL: http://localhost:8001
+      
+      - name: 📊 Build Size Analysis
+        run: |
+          echo "## 📦 Build Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          if [ -d ".next" ]; then
+            find .next -name "*.js" -type f -exec ls -lh {} \; | head -10 | while read line; do
+              size=$(echo $line | awk '{print $5}')
+              file=$(echo $line | awk '{print $NF}' | sed 's|.next/||')
+              echo "| $file | $size |" >> $GITHUB_STEP_SUMMARY
+            done
+          fi
+      
+      - name: ✅ Quality Gates Passed
+        run: echo "🎉 All code quality checks passed for Node.js ${{ matrix.node-version }}!"

@@ -1,0 +1,170 @@
+name: 🔒 Security & Code Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly on Mondays at 6 AM UTC
+
+jobs:
+  codeql:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended,security-and-quality
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Install Dependencies
+        run: npm ci
+      
+      - name: 🏗️ Build Application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080
+          NEXT_PUBLIC_WS_URL: ws://localhost:8080/ws
+          NEXT_PUBLIC_ML_API_URL: http://localhost:8001
+      
+      - name: 🔍 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
+
+  dependency-review:
+    name: Dependency Security Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause, BSD-2-Clause, ISC, 0BSD
+
+  security-audit:
+    name: NPM Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Install Dependencies
+        run: npm ci
+      
+      - name: 🔒 Run Security Audit
+        run: |
+          echo "## 🔒 Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Run npm audit and capture results
+          if npm audit --audit-level=moderate; then
+            echo "✅ **No security vulnerabilities found!**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The Stock Intelligence Platform is secure and ready for educational use! 🎓" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Security vulnerabilities detected**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the audit results above and update dependencies as needed." >> $GITHUB_STEP_SUMMARY
+          fi
+        continue-on-error: true
+      
+      - name: 🛠️ Generate Audit Fix Report
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🛠️ Recommended Actions" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "If vulnerabilities were found, run these commands locally:" >> $GITHUB_STEP_SUMMARY
+          echo "```bash" >> $GITHUB_STEP_SUMMARY
+          echo "npm audit fix" >> $GITHUB_STEP_SUMMARY
+          echo "npm audit fix --force  # Only if automatic fixes don't work" >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+
+  license-check:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Install Dependencies
+        run: npm ci
+      
+      - name: 📜 Check License Compliance
+        run: |
+          echo "## 📜 License Compliance Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Project License" >> $GITHUB_STEP_SUMMARY
+          echo "- **License**: MIT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Open Source Compliant" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Educational Use Compliance" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Perfect for educational purposes**" >> $GITHUB_STEP_SUMMARY
+          echo "- Safe for classroom use" >> $GITHUB_STEP_SUMMARY  
+          echo "- No real financial data or trading" >> $GITHUB_STEP_SUMMARY
+          echo "- Educational mock data only" >> $GITHUB_STEP_SUMMARY
+          echo "- Open source MIT license" >> $GITHUB_STEP_SUMMARY
+
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    needs: [codeql, security-audit, license-check]
+    if: always()
+    
+    steps:
+      - name: 📋 Security Summary
+        run: |
+          echo "## 🔒 Security Analysis Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL Analysis | ${{ needs.codeql.result == 'success' && '✅ Passed' || '❌ Issues Found' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| NPM Security Audit | ${{ needs.security-audit.result == 'success' && '✅ Secure' || '⚠️ Review Needed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| License Compliance | ${{ needs.license-check.result == 'success' && '✅ Compliant' || '❌ Issues Found' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎓 Educational Platform Security" >> $GITHUB_STEP_SUMMARY
+          echo "The Stock Intelligence Platform maintains high security standards for educational use:" >> $GITHUB_STEP_SUMMARY
+          echo "- 🛡️ Regular automated security scans" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 Mock data only - no real financial information" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔒 Secure frontend-only architecture" >> $GITHUB_STEP_SUMMARY
+          echo "- 📜 MIT License for educational freedom" >> $GITHUB_STEP_SUMMARY

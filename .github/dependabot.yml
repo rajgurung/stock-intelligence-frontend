@@ -1,0 +1,83 @@
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "rajgurung"
+    assignees:
+      - "rajgurung"
+    commit-message:
+      prefix: "⬆️"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    versioning-strategy: "increase"
+    groups:
+      # Group React ecosystem updates
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      # Group Next.js ecosystem updates  
+      nextjs:
+        patterns:
+          - "next"
+          - "@next/*"
+      # Group testing dependencies
+      testing:
+        patterns:
+          - "jest"
+          - "@jest/*"
+          - "playwright"
+          - "@playwright/*"
+          - "testing-library"
+          - "@testing-library/*"
+      # Group linting and formatting
+      code-quality:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "prettier"
+          - "@typescript-eslint/*"
+      # Group build tools
+      build-tools:
+        patterns:
+          - "webpack"
+          - "babel"
+          - "@babel/*"
+          - "postcss"
+          - "tailwindcss"
+    ignore:
+      # Ignore major version updates for stable packages
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "rajgurung"
+    assignees:
+      - "rajgurung"
+    commit-message:
+      prefix: "🔧"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "automated"

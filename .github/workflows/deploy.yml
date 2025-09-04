@@ -1,0 +1,116 @@
+name: 🚀 Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Install Dependencies
+        run: npm ci
+      
+      - name: 🔍 Run Quality Checks
+        run: |
+          echo "🔍 Running pre-deployment quality checks..."
+          npm run lint
+          npm run type-check
+      
+      - name: 🧪 Run Tests
+        run: |
+          echo "🧪 Running tests before deployment..."
+          npm test -- --watchAll=false --passWithNoTests
+      
+      - name: 🏗️ Build Application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:8080' }}
+          NEXT_PUBLIC_WS_URL: ${{ vars.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws' }}
+          NEXT_PUBLIC_ML_API_URL: ${{ vars.NEXT_PUBLIC_ML_API_URL || 'http://localhost:8001' }}
+      
+      - name: 📊 Build Analysis
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: Production" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -d ".next" ]; then
+            echo "### Build Size Analysis" >> $GITHUB_STEP_SUMMARY
+            echo "| File Type | Size |" >> $GITHUB_STEP_SUMMARY
+            echo "|-----------|------|" >> $GITHUB_STEP_SUMMARY
+            
+            # Calculate total build size
+            TOTAL_SIZE=$(du -sh .next | cut -f1)
+            echo "| **Total Build** | $TOTAL_SIZE |" >> $GITHUB_STEP_SUMMARY
+            
+            # Show largest JavaScript chunks
+            find .next -name "*.js" -type f -exec ls -lh {} \; | sort -hr -k5 | head -5 | while read line; do
+              size=$(echo $line | awk '{print $5}')
+              file=$(echo $line | awk '{print $NF}' | sed 's|.next/||' | cut -c1-50)
+              echo "| $file | $size |" >> $GITHUB_STEP_SUMMARY
+            done
+          fi
+      
+      - name: 🌐 Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+      
+      - name: 🎉 Deployment Success
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎉 Deployment Status" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Successfully deployed to production!**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **Live Demo**: [Stock Intelligence Platform](https://stock-intelligence-frontend.vercel.app)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The educational platform is now live and ready for students, educators, and developers! 🚀📈" >> $GITHUB_STEP_SUMMARY
+
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success()
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 💡 Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            https://stock-intelligence-frontend.vercel.app
+          configPath: './.lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      
+      - name: 📊 Performance Summary
+        run: |
+          echo "## 💡 Lighthouse Performance Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔍 Performance audit completed for the deployed application." >> $GITHUB_STEP_SUMMARY
+          echo "📊 Detailed results are available in the workflow artifacts." >> $GITHUB_STEP_SUMMARY
