@@ -60,7 +60,7 @@ function DashboardLayoutContent({ children, currentSection = 'markets', onSectio
       
       {/* Educational Disclaimer */}
       <div className="absolute top-0 left-0 right-0 z-50">
-        <EducationalDisclaimer />
+        <EducationalDisclaimer sidebarCollapsed={sidebarCollapsed} />
       </div>
       
       {/* Full Height Sidebar */}

@@ -8,11 +8,21 @@ import {
   Moon,
   Sun,
   Zap,
-  Download
+  Download,
+  BookOpen,
+  GraduationCap,
+  Target,
+  PlayCircle,
+  ArrowRight,
+  Star,
+  TrendingUp,
+  BarChart3,
+  CheckCircle
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
 import { useTheme } from '@/contexts/theme-context';
 import { StatusIndicator, StatusIndicatorCompact } from '@/components/ui/status-indicator';
+import { TourTrigger } from '@/components/ui/educational-tour';
 // Removed WebSocket status for educational frontend-only version
 
 interface TopBarProps {
@@ -30,6 +40,7 @@ export function TopBar({
 }: TopBarProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const [showHelp, setShowHelp] = useState(false);
+  const [learningTab, setLearningTab] = useState<'help' | 'pathways' | 'tutorials'>('help');
 
   const quickThemeToggle = () => {
     // This will be a simple toggle between light/dark, ignoring system
@@ -154,70 +165,220 @@ export function TopBar({
               <HelpCircle className="h-5 w-5 text-muted-foreground group-hover:text-card-foreground transition-colors" />
             </button>
 
-            {/* Help Dropdown */}
+            {/* Enhanced Educational Help Dropdown */}
             {showHelp && (
               <>
                 <div 
                   className="fixed inset-0 z-[115]" 
                   onClick={() => setShowHelp(false)} 
                 />
-                <div className="absolute top-full right-0 mt-2 w-80 bg-card/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl p-4 z-[120] animate-scale-in">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
-                      <HelpCircle className="h-5 w-5 text-white" />
+                <div className="absolute top-full right-0 mt-2 w-96 bg-card/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-[120] animate-scale-in overflow-hidden">
+                  {/* Header */}
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                        <GraduationCap className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-card-foreground">Learning Center</h3>
+                        <p className="text-xs text-muted-foreground">Master stock market fundamentals</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-card-foreground">Help & Documentation</h3>
-                      <p className="text-xs text-muted-foreground">Educational Stock Platform</p>
-                    </div>
-                  </div>
-                  
-                  {/* Quick Start */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-semibold text-card-foreground mb-2">Quick Start</h4>
-                    <div className="space-y-1 text-xs text-muted-foreground">
-                      <p>• Browse stocks in the <strong>Markets</strong> section</p>
-                      <p>• Add favorites to your <strong>Watchlist</strong></p>
-                      <p>• Use <strong>Compare</strong> to analyze multiple stocks</p>
-                      <p>• Search stocks using the sidebar search</p>
+                    
+                    {/* Tab Navigation */}
+                    <div className="flex gap-1 p-1 bg-white/50 dark:bg-slate-800/50 rounded-lg">
+                      {[
+                        { key: 'help', label: 'Quick Help', icon: HelpCircle },
+                        { key: 'pathways', label: 'Learning Paths', icon: Target },
+                        { key: 'tutorials', label: 'Tutorials', icon: PlayCircle }
+                      ].map(({ key, label, icon: Icon }) => (
+                        <button
+                          key={key}
+                          onClick={() => setLearningTab(key as any)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
+                            learningTab === key
+                              ? 'bg-blue-500 text-white shadow-sm'
+                              : 'text-muted-foreground hover:text-card-foreground hover:bg-white/30 dark:hover:bg-slate-700/30'
+                          }`}
+                        >
+                          <Icon className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">{label}</span>
+                        </button>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Keyboard Shortcuts */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-semibold text-card-foreground mb-2">Keyboard Shortcuts</h4>
-                    <div className="space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Search</span>
-                        <kbd className="px-1.5 py-0.5 bg-muted/50 rounded text-[10px]">Ctrl + K</kbd>
+                  <div className="p-4 max-h-80 overflow-y-auto">
+                    {/* Quick Help Tab */}
+                    {learningTab === 'help' && (
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-2">
+                            <BookOpen className="h-4 w-4" />
+                            Platform Features
+                          </h4>
+                          <div className="space-y-1 text-xs text-muted-foreground">
+                            <p>• Browse stocks in the <strong>Markets</strong> section</p>
+                            <p>• Add favorites to your <strong>Watchlist</strong></p>
+                            <p>• Use <strong>Compare</strong> to analyze multiple stocks</p>
+                            <p>• Hover over metrics for explanations</p>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="text-sm font-semibold text-card-foreground mb-2">Keyboard Shortcuts</h4>
+                          <div className="space-y-1 text-xs">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Search</span>
+                              <kbd className="px-1.5 py-0.5 bg-muted/50 rounded text-[10px]">Ctrl + K</kbd>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Navigate results</span>
+                              <kbd className="px-1.5 py-0.5 bg-muted/50 rounded text-[10px]">↑ ↓</kbd>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Fullscreen</span>
+                              <kbd className="px-1.5 py-0.5 bg-muted/50 rounded text-[10px]">F11</kbd>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Navigate results</span>
-                        <kbd className="px-1.5 py-0.5 bg-muted/50 rounded text-[10px]">↑ ↓</kbd>
+                    )}
+
+                    {/* Learning Pathways Tab */}
+                    {learningTab === 'pathways' && (
+                      <div className="space-y-3">
+                        <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
+                          <div className="flex items-center gap-2 mb-2">
+                            <GraduationCap className="h-4 w-4 text-green-600" />
+                            <span className="text-sm font-medium text-green-800 dark:text-green-200">Beginner Path</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-green-700 dark:text-green-300">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-3 w-3" />
+                              <span>Learn what stocks are</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-3 w-3" />
+                              <span>Understand price & market cap</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Practice using watchlists</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+                          <div className="flex items-center gap-2 mb-2">
+                            <TrendingUp className="h-4 w-4 text-blue-600" />
+                            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Intermediate Path</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-blue-700 dark:text-blue-300">
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Analyze financial ratios</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Compare stocks by sector</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Read price charts</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800">
+                          <div className="flex items-center gap-2 mb-2">
+                            <BarChart3 className="h-4 w-4 text-purple-600" />
+                            <span className="text-sm font-medium text-purple-800 dark:text-purple-200">Advanced Path</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-purple-700 dark:text-purple-300">
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Technical analysis patterns</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Portfolio diversification</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Target className="h-3 w-3" />
+                              <span>Risk assessment strategies</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Fullscreen</span>
-                        <kbd className="px-1.5 py-0.5 bg-muted/50 rounded text-[10px]">F11</kbd>
+                    )}
+
+                    {/* Interactive Tutorials Tab */}
+                    {learningTab === 'tutorials' && (
+                      <div className="space-y-3">
+                        <button className="w-full p-3 rounded-lg bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border border-emerald-200 dark:border-emerald-800 hover:from-emerald-100 hover:to-green-100 dark:hover:from-emerald-950/40 dark:hover:to-green-950/40 transition-all duration-200 text-left">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-emerald-500 rounded-lg">
+                              <PlayCircle className="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-card-foreground">Getting Started Tour</div>
+                              <div className="text-xs text-muted-foreground">5-minute guided walkthrough</div>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-emerald-600 ml-auto" />
+                          </div>
+                        </button>
+
+                        <button className="w-full p-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-950/40 dark:hover:to-indigo-950/40 transition-all duration-200 text-left">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-500 rounded-lg">
+                              <Star className="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-card-foreground">Building Your First Watchlist</div>
+                              <div className="text-xs text-muted-foreground">Learn to track favorite stocks</div>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-blue-600 ml-auto" />
+                          </div>
+                        </button>
+
+                        <button className="w-full p-3 rounded-lg bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border border-orange-200 dark:border-orange-800 hover:from-orange-100 hover:to-amber-100 dark:hover:from-orange-950/40 dark:hover:to-amber-950/40 transition-all duration-200 text-left">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-orange-500 rounded-lg">
+                              <BarChart3 className="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-card-foreground">Reading Stock Charts</div>
+                              <div className="text-xs text-muted-foreground">Understand price movements</div>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-orange-600 ml-auto" />
+                          </div>
+                        </button>
+
+                        <div className="pt-3 border-t border-border/50 space-y-3">
+                          <div className="flex justify-center">
+                            <TourTrigger />
+                          </div>
+                          <div className="text-xs text-muted-foreground text-center">
+                            💡 <strong>Pro Tip:</strong> Click "Learn About This Stock" on any stock card for contextual learning!
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
-                  {/* Actions */}
-                  <div className="space-y-2 pt-3 border-t border-border/50">
-                    <button className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors text-left">
-                      <Download className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <div className="text-sm text-card-foreground">Export Data</div>
-                        <div className="text-xs text-muted-foreground">Download stock data as CSV</div>
-                      </div>
-                    </button>
-                    <button className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors text-left">
-                      <Zap className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <div className="text-sm text-card-foreground">About Platform</div>
-                        <div className="text-xs text-muted-foreground">Educational stock analysis tool</div>
-                      </div>
-                    </button>
+                  {/* Footer Actions */}
+                  <div className="p-4 bg-muted/20 border-t border-border/50">
+                    <div className="flex gap-2">
+                      <button className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors text-left">
+                        <Download className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-card-foreground">Export Data</span>
+                      </button>
+                      <button className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors text-left">
+                        <Zap className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-card-foreground">About</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </>

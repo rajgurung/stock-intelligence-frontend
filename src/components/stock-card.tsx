@@ -8,7 +8,8 @@ import { useStockChartData } from '@/services/stockChartService';
 import { EnhancedPerformanceOverlay } from '@/components/charts/enhanced-performance-overlay';
 import { StaticDisplay } from '@/components/ui/static-display';
 import { useSearch } from '@/contexts/search-context';
-import { TrendingUp, TrendingDown, Activity, Star, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, Star, BarChart3, ChevronDown, ChevronUp, BookOpen, Target, AlertCircle } from 'lucide-react';
+import { EducationalTooltip, financialTerms, EducationalTip } from '@/components/ui/educational-disclaimer';
 
 interface StockCardProps {
   stock: Stock;
@@ -17,6 +18,7 @@ interface StockCardProps {
 export const StockCard = memo(function StockCard({ stock }: StockCardProps) {
   const [showPerformanceOverlay, setShowPerformanceOverlay] = useState(false);
   const [overlayPosition, setOverlayPosition] = useState({ x: 0, y: 0 });
+  const [showLearnMore, setShowLearnMore] = useState(false);
   
   // Memoize expensive calculations that depend on stock data
   const styleCalculations = useMemo(() => {
@@ -201,16 +203,28 @@ export const StockCard = memo(function StockCard({ stock }: StockCardProps) {
       <div className="relative z-10 mb-8">
         <div className="flex items-end justify-between mb-8 pr-8">
           <div>
-            <div className="text-2xl font-semibold text-card-foreground tabular-nums mb-1">
-              <span>{formattedValues.currentPrice}</span>
-            </div>
+            <EducationalTooltip 
+              term={financialTerms.price.term}
+              definition={financialTerms.price.definition}
+              example={financialTerms.price.example}
+            >
+              <div className="text-2xl font-semibold text-card-foreground tabular-nums mb-1">
+                <span>{formattedValues.currentPrice}</span>
+              </div>
+            </EducationalTooltip>
             <div className="flex items-center gap-2">
               <span className={`text-xs font-medium tabular-nums px-2 py-1 rounded ${styleCalculations.badgeTextColor}`}>
                 {formattedValues.dailyChange}
               </span>
-              <span className={`text-xs font-medium tabular-nums px-2 py-1 rounded ${styleCalculations.badgeTextColor}`}>
-                ({formattedValues.changePercent})
-              </span>
+              <EducationalTooltip 
+                term={financialTerms['change-percent'].term}
+                definition={financialTerms['change-percent'].definition}
+                example={financialTerms['change-percent'].example}
+              >
+                <span className={`text-xs font-medium tabular-nums px-2 py-1 rounded ${styleCalculations.badgeTextColor}`}>
+                  ({formattedValues.changePercent})
+                </span>
+              </EducationalTooltip>
             </div>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground bg-muted/30 dark:bg-muted/20 px-3 py-1.5 rounded-lg">
@@ -225,15 +239,27 @@ export const StockCard = memo(function StockCard({ stock }: StockCardProps) {
         </div>
       </div>
 
-      {/* Enhanced Details Grid */}
+      {/* Enhanced Details Grid with Educational Tooltips */}
       <div className="relative z-10 grid grid-cols-2 gap-6 mb-10">
         <div className="space-y-3">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground uppercase tracking-wide font-normal mb-1">Sector</span>
+            <EducationalTooltip 
+              term={financialTerms.sector.term}
+              definition={financialTerms.sector.definition}
+              example={financialTerms.sector.example}
+            >
+              <span className="text-xs text-muted-foreground uppercase tracking-wide font-normal mb-1">Sector</span>
+            </EducationalTooltip>
             <span className="text-sm font-medium text-card-foreground">{stock.sector}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground uppercase tracking-wide font-normal mb-1">Volume</span>
+            <EducationalTooltip 
+              term={financialTerms.volume.term}
+              definition={financialTerms.volume.definition}
+              example={financialTerms.volume.example}
+            >
+              <span className="text-xs text-muted-foreground uppercase tracking-wide font-normal mb-1">Volume</span>
+            </EducationalTooltip>
             <span className="text-sm font-medium text-card-foreground tabular-nums">
               {formattedValues.volume}
             </span>
@@ -241,7 +267,13 @@ export const StockCard = memo(function StockCard({ stock }: StockCardProps) {
         </div>
         <div className="space-y-3">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground uppercase tracking-wide font-normal mb-1">Market Cap</span>
+            <EducationalTooltip 
+              term={financialTerms['market-cap'].term}
+              definition={financialTerms['market-cap'].definition}
+              example={financialTerms['market-cap'].example}
+            >
+              <span className="text-xs text-muted-foreground uppercase tracking-wide font-normal mb-1">Market Cap</span>
+            </EducationalTooltip>
             <span className="text-sm font-medium text-card-foreground tabular-nums">
               {formattedValues.marketCap}
             </span>
@@ -251,6 +283,73 @@ export const StockCard = memo(function StockCard({ stock }: StockCardProps) {
             <span className="text-sm font-medium text-card-foreground">{stock.exchange}</span>
           </div>
         </div>
+      </div>
+
+      {/* Learn More Educational Section */}
+      <div className="relative z-10 mb-4">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowLearnMore(!showLearnMore);
+          }}
+          className="w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-950/50 dark:hover:to-indigo-950/50 transition-all duration-200"
+        >
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+              Learn About This Stock
+            </span>
+          </div>
+          {showLearnMore ? (
+            <ChevronUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          )}
+        </button>
+
+        {showLearnMore && (
+          <div className="mt-4 space-y-4 p-4 rounded-lg bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-950/50 dark:to-blue-950/20 border border-slate-200 dark:border-slate-700">
+            <EducationalTip 
+              tip={`${stock.symbol} is a ${stock.sector} company. Research the sector trends and company fundamentals before making investment decisions.`}
+              variant="info"
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium text-card-foreground">Key Metrics to Watch</span>
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1 ml-6">
+                  <li>• Price trends and volatility</li>
+                  <li>• Trading volume patterns</li>
+                  <li>• Sector performance comparison</li>
+                  <li>• Market capitalization changes</li>
+                </ul>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm font-medium text-card-foreground">Investment Basics</span>
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1 ml-6">
+                  <li>• Diversify your portfolio</li>
+                  <li>• Understand company fundamentals</li>
+                  <li>• Consider long-term trends</li>
+                  <li>• Only invest what you can afford</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-600">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong>📚 Educational Purpose:</strong> This platform is designed for learning about stock markets and financial concepts. 
+                All data shown is for educational demonstration only and should not be used for actual investment decisions.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Enhanced Footer */}

@@ -9,6 +9,7 @@ import { InfiniteStockList } from '@/components/infinite-stock-list';
 import { InlineBetaBadge } from '@/components/ui/beta-badge';
 import { StockReadingGuide } from '@/components/help/stock-reading-guide';
 import { StaticDisplay } from '@/components/ui/static-display';
+import { WelcomeBanner } from '@/components/ui/educational-tour';
 import {
   PerformanceSectionSkeleton,
   PriceRangeFilterSkeleton
@@ -175,6 +176,9 @@ export function MarketsDashboard({ showDebug = false, stocks: propStocks = [] }:
           </div>
         </div>
       </div>
+
+      {/* Welcome Banner for New Users */}
+      <WelcomeBanner />
 
       {/* Essential Performance Only - Single Row */}
       {performance && performance.top_gainers && performance.top_losers && performance.most_active ? (
