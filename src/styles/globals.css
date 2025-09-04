@@ -1,0 +1,453 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import our enhanced design system */
+@import './design-system.css';
+@import './accessibility.css';
+
+/* Global styles and overrides */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+
+    /* Markets Dashboard Professional Color System */
+    --dashboard-primary: 159 100% 40%; /* Emerald 600 */
+    --dashboard-primary-light: 159 100% 45%; /* Emerald 500 */
+    --dashboard-primary-dark: 159 100% 35%; /* Emerald 700 */
+    
+    /* High Contrast Backgrounds */
+    --dashboard-background: 0 0% 100%; /* Pure white */
+    --dashboard-surface: 220 14% 96%; /* Gray 50 */
+    --dashboard-card: 0 0% 100%; /* Pure white */
+    --dashboard-card-border: 220 13% 91%; /* Gray 200 */
+    
+    /* High Contrast Text Colors (WCAG 4.5:1 compliant) */
+    --dashboard-text-primary: 220 9% 7%; /* Gray 900 */
+    --dashboard-text-secondary: 220 9% 46%; /* Gray 500 */
+    --dashboard-text-muted: 220 9% 60%; /* Gray 400 */
+    
+    /* Status Colors */
+    --dashboard-success: 142 76% 36%; /* Green 600 */
+    --dashboard-success-bg: 142 76% 96%; /* Green 50 */
+    --dashboard-warning: 38 92% 50%; /* Amber 500 */
+    --dashboard-warning-bg: 48 96% 89%; /* Amber 50 */
+    --dashboard-error: 0 84% 60%; /* Red 500 */
+    --dashboard-error-bg: 0 86% 97%; /* Red 50 */
+    
+    /* Market Status Colors */
+    --dashboard-market-open: 142 76% 36%; /* Green 600 */
+    --dashboard-market-closed: 220 9% 46%; /* Gray 500 */
+    --dashboard-bullish: 142 76% 36%; /* Green 600 */
+    --dashboard-bearish: 0 84% 60%; /* Red 500 */
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+
+    /* Markets Dashboard Dark Mode Colors */
+    --dashboard-primary: 159 100% 45%; /* Emerald 500 */
+    --dashboard-primary-light: 159 100% 50%; /* Emerald 400 */
+    --dashboard-primary-dark: 159 100% 40%; /* Emerald 600 */
+    
+    /* Dark Mode Backgrounds */
+    --dashboard-background: 220 9% 7%; /* Gray 900 */
+    --dashboard-surface: 220 13% 11%; /* Gray 800 */
+    --dashboard-card: 220 13% 11%; /* Gray 800 */
+    --dashboard-card-border: 220 13% 23%; /* Gray 700 */
+    
+    /* Dark Mode High Contrast Text */
+    --dashboard-text-primary: 0 0% 100%; /* Pure white */
+    --dashboard-text-secondary: 220 14% 83%; /* Gray 300 */
+    --dashboard-text-muted: 220 9% 60%; /* Gray 400 */
+    
+    /* Dark Mode Status Colors */
+    --dashboard-success: 142 76% 45%; /* Green 500 */
+    --dashboard-success-bg: 142 76% 10%; /* Green 950 */
+    --dashboard-warning: 38 92% 55%; /* Amber 400 */
+    --dashboard-warning-bg: 45 93% 8%; /* Amber 950 */
+    --dashboard-error: 0 84% 65%; /* Red 400 */
+    --dashboard-error-bg: 0 63% 6%; /* Red 950 */
+    
+    /* Dark Mode Market Status */
+    --dashboard-market-open: 142 76% 45%; /* Green 500 */
+    --dashboard-market-closed: 220 9% 60%; /* Gray 400 */
+    --dashboard-bullish: 142 76% 45%; /* Green 500 */
+    --dashboard-bearish: 0 84% 65%; /* Red 400 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Enhanced animations */
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.4s ease-out;
+  }
+  
+  .animate-bounce-gentle {
+    animation: bounceGentle 2s infinite;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Glass morphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text utilities */
+.gradient-text-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)) 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Interactive elements */
+.interactive-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.interactive-card:active {
+  transform: translateY(-2px);
+}
+
+/* Focus states for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+}
+
+/* Loading states */
+.skeleton {
+  background: linear-gradient(90deg, 
+    hsl(var(--muted)) 25%, 
+    hsl(var(--muted) / 0.5) 50%, 
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Markets Dashboard Typography System */
+@layer utilities {
+  .dashboard-text-display {
+    font-size: 2.25rem; /* 36px */
+    line-height: 2.5rem; /* 40px */
+    font-weight: 800;
+    color: hsl(var(--dashboard-text-primary));
+  }
+
+  .dashboard-text-heading-1 {
+    font-size: 1.875rem; /* 30px */
+    line-height: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: hsl(var(--dashboard-text-primary));
+  }
+
+  .dashboard-text-heading-2 {
+    font-size: 1.5rem; /* 24px */
+    line-height: 2rem; /* 32px */
+    font-weight: 600;
+    color: hsl(var(--dashboard-text-primary));
+  }
+
+  .dashboard-text-heading-3 {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem; /* 28px */
+    font-weight: 600;
+    color: hsl(var(--dashboard-text-primary));
+  }
+
+  .dashboard-text-body {
+    font-size: 1rem; /* 16px */
+    line-height: 1.5rem; /* 24px */
+    font-weight: 400;
+    color: hsl(var(--dashboard-text-primary));
+  }
+
+  .dashboard-text-body-secondary {
+    font-size: 1rem; /* 16px */
+    line-height: 1.5rem; /* 24px */
+    font-weight: 400;
+    color: hsl(var(--dashboard-text-secondary));
+  }
+
+  .dashboard-text-caption {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.25rem; /* 20px */
+    font-weight: 500;
+    color: hsl(var(--dashboard-text-secondary));
+  }
+
+  .dashboard-text-small {
+    font-size: 0.75rem; /* 12px */
+    line-height: 1rem; /* 16px */
+    font-weight: 500;
+    color: hsl(var(--dashboard-text-muted));
+  }
+}
+
+/* Markets Dashboard Component Styles */
+@layer components {
+  .dashboard-card {
+    background-color: hsl(var(--dashboard-card));
+    border: 1px solid hsl(var(--dashboard-card-border));
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  .dashboard-card-elevated {
+    background-color: hsl(var(--dashboard-card));
+    border: 1px solid hsl(var(--dashboard-card-border));
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .dashboard-status-success {
+    color: hsl(var(--dashboard-success));
+    background-color: hsl(var(--dashboard-success-bg));
+  }
+
+  .dashboard-status-warning {
+    color: hsl(var(--dashboard-warning));
+    background-color: hsl(var(--dashboard-warning-bg));
+  }
+
+  .dashboard-status-error {
+    color: hsl(var(--dashboard-error));
+    background-color: hsl(var(--dashboard-error-bg));
+  }
+
+  .dashboard-market-open {
+    color: hsl(var(--dashboard-market-open));
+  }
+
+  .dashboard-market-closed {
+    color: hsl(var(--dashboard-market-closed));
+  }
+
+  .dashboard-bullish {
+    color: hsl(var(--dashboard-bullish));
+  }
+
+  .dashboard-bearish {
+    color: hsl(var(--dashboard-bearish));
+  }
+}
+
+/* Spacing System (8px grid) */
+@layer utilities {
+  .dashboard-space-xs { margin: 0.25rem; } /* 4px */
+  .dashboard-space-sm { margin: 0.5rem; }  /* 8px */
+  .dashboard-space-md { margin: 1rem; }    /* 16px */
+  .dashboard-space-lg { margin: 1.5rem; }  /* 24px */
+  .dashboard-space-xl { margin: 2rem; }    /* 32px */
+  .dashboard-space-2xl { margin: 3rem; }   /* 48px */
+
+  .dashboard-p-xs { padding: 0.25rem; } /* 4px */
+  .dashboard-p-sm { padding: 0.5rem; }  /* 8px */
+  .dashboard-p-md { padding: 1rem; }    /* 16px */
+  .dashboard-p-lg { padding: 1.5rem; }  /* 24px */
+  .dashboard-p-xl { padding: 2rem; }    /* 32px */
+  .dashboard-p-2xl { padding: 3rem; }   /* 48px */
+}
+
+/* Professional Transitions */
+@layer utilities {
+  .dashboard-transition {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dashboard-transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dashboard-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
