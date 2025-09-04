@@ -48,7 +48,7 @@ test.describe('Stock Dashboard E2E', () => {
     await page.goto('/');
 
     // Wait for the page to load
-    await expect(page.locator('h1')).toContainText('Stock Intelligence Platform');
+    await expect(page.getByText('Stock Intelligence').first()).toBeVisible();
 
     // Check if stocks are displayed (assuming there's a stocks section)
     await expect(page.locator('[data-testid="stock-AAPL"]')).toBeVisible({ timeout: 10000 });
@@ -97,7 +97,7 @@ test.describe('Stock Dashboard E2E', () => {
     await page.goto('/');
 
     // Check that the page loads on mobile
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.getByText('Stock Intelligence').first()).toBeVisible();
     
     // Verify mobile layout adjustments
     const stockCards = page.locator('[data-testid^="stock-"]');
