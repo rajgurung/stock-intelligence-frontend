@@ -102,7 +102,9 @@ export function WebSocketClient({ onStockUpdate, onPerformanceUpdate, onOverview
               break
 
             default:
-              console.log('Unknown message type:', message.type)
+              // Remove newlines from message.type before logging to prevent log injection
+              const sanitizedType = String(message.type).replace(/[\r\n]+/g, "");
+              console.log('Unknown message type:', sanitizedType);
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error)
